@@ -3,7 +3,7 @@
 
 #include "mapa.h"
 #include "nivel.h"
-
+#include "pilas.c"
 typedef void (*DisposicionTorres)(Nivel*, Mapa*);
 
 void disponer(Nivel* nivel, Mapa* mapa);
