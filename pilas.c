@@ -1,35 +1,44 @@
-#include "pilas.h"
+#include "pila.h"
+#include "mapa.h"
+int MAX_PILA = mapa->cant_torres;
+Pila* pila_crear() {
+    Pila* p = malloc(sizeof(Pila));
+    p->datos = malloc(sizeof(Estado) * MAX_PILA);
+    p->ultimo = 0;
+    return p;
+}
 
-Pila* pila_crear(){
-    Pila* coba;
-    coba = malloc(sizeof(Pila));
-    coba -> ultimo = 0;
-    return coba;
+int pila_es_vacia(Pila* p) {
+    return p->ultimo == 0;
 }
-int pila_es_vacia(Pila* koba){
-     if(koba->ultimo == 0)
-        return 1;
-     return 0;
- }
- int pila_tope(Pila* koba){
-    if(koba->ultimo == 0)
-        return -1;
-    int ultimo_aux = koba->ultimo;
-    ultimo_aux  --;
-    int nro = koba->datos[ultimo_aux];
-    return nro;
- }
- void pila_apilar(Pila* koba, int numero){
-      koba->datos[koba->ultimo] = numero;
-      koba->ultimo += 1;
+
+Estado pila_tope(Pila* p) {
+    if (pila_es_vacia(p)) {
+        Estado vacio = {{-1, -1}, -1};
+        return vacio;
+    }
+    return p->datos[p->ultimo - 1];
 }
- void pila_desapilar(Pila* koba){
-      koba-> ultimo -= 1; 
+
+void pila_apilar(Pila* p, Estado e) {
+    if (p->ultimo == MAX_PILA) {
+        MAX_PILA += 10;
+        p->datos = realloc(p->datos, sizeof(Estado) * MAX_PILA);
+    }
+    p->datos[p->ultimo++] = e;
 }
- void pila_imprimir(Pila* koba){
-    for(int i = 0; i < koba->ultimo; i++)
-        printf("%d\n", koba->datos[i]);
-}       
-void pila_destruir(Pila* koba){
-    free(koba);
+
+void pila_desapilar(Pila* p) {
+    if (!pila_es_vacia(p))
+        p->ultimo--;
+}
+
+void pila_imprimir(Pila* p) {
+    for (int i = 0; i < p->ultimo; i++)
+        printf("(%d, %d) idx: %d\n", p->datos[i].posicion.x, p->datos[i].posicion.y, p->datos[i].idx_torre);
+}
+
+void pila_destruir(Pila* p) {
+    free(p->datos);
+    free(p);
 }
