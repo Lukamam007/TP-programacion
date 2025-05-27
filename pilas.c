@@ -1,4 +1,4 @@
-#include "pila.h"
+#include "pilas.h"
 
 Pila* pila_crear(){
     Pila* coba;
