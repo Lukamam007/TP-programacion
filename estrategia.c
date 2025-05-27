@@ -59,6 +59,44 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
 }
 
 void disponer_custom(Nivel* nivel, Mapa* mapa) {
-    /* A cargo de la/el estudiante */
+    int cantidad_casillas = mapa->alto * mapa->ancho;
+    Coordenada posiciones_validas_torre[cantidad_casillas];
+    int casilla_elegida[cantidad_casillas];
+    for(int i = 0; i < cantidad_casillas; casilla_elegida[i++] = 0);
+    int cant_torres = mapa_cant_torres
+    int cant_validas = posiciones_validas(posiciones_validas_torre, mapa->casillas, mapa->alto, mapa->ancho);
+    for(int j = 0 ; j < cant_validas && !cant_torres ; j++){
+        if(contarVecinosCamino(posiciones_validas_torre[j].x, posiciones_validas_torre[j].y,mapa) > 3){
+            casilla_elegida[nueva_torre] = 1;
+            int nueva_torre_x = posiciones_validas_torre[j].x;
+            int nueva_torre_y = posiciones_validas_torre[j].y;
+            colocar_torre(mapa, nueva_torre_x, nueva_torre_y, colocadas);
+            cant_torres--;
+        } 
+    }
     return;
 }
+
+int contarVecinosCamino(int posicion_torre_x, int posicion_torre_y , Mapa* mapa) {
+    int vecinos = 0;
+    int desplazamientos[8][2] = {
+        {-1, -1}, {-1, 0}, {-1, 1}, // Arriba izquierda, arriba, arriba derecha
+        {0, -1},         {0, 1},   // Izquierda, derecha
+        {1, -1}, {1, 0}, {1, 1}    // Abajo izquierda, abajo, abajo derecha
+    };
+
+    for (int i = 0; i < 8; i++) {
+        int nuevaFila = posicion_torre_y + desplazamientos[i][0];
+        int nuevaColumna = posicion_torre_x + desplazamientos[i][1];
+
+        // Verificar que esté dentro de los límites del tablero
+        if (nuevaFila >= 0 && nuevaFila < X && nuevaColumna >= 0 && nuevaColumna < Y) {
+            if (mapa->casillas[nuevaFila][nuevaColumna] = CAMINO) {
+                vecinos++;
+            }
+        }
+    }
+
+    return vecinos;
+}
+
