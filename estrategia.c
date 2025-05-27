@@ -61,17 +61,16 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
 void disponer_custom(Nivel* nivel, Mapa* mapa) {
     int cantidad_casillas = mapa->alto * mapa->ancho;
     Coordenada posiciones_validas_torre[cantidad_casillas];
-    int casilla_elegida[cantidad_casillas];
-    for(int i = 0; i < cantidad_casillas; casilla_elegida[i++] = 0);
-    int cant_torres = mapa_cant_torres
+    int cant_torres = mapa -> cant_torres;
+    int colocadas = 0;
     int cant_validas = posiciones_validas(posiciones_validas_torre, mapa->casillas, mapa->alto, mapa->ancho);
     for(int j = 0 ; j < cant_validas && !cant_torres ; j++){
         if(contarVecinosCamino(posiciones_validas_torre[j].x, posiciones_validas_torre[j].y,mapa) > 3){
-            casilla_elegida[nueva_torre] = 1;
             int nueva_torre_x = posiciones_validas_torre[j].x;
             int nueva_torre_y = posiciones_validas_torre[j].y;
             colocar_torre(mapa, nueva_torre_x, nueva_torre_y, colocadas);
             cant_torres--;
+            colocadas++;
         } 
     }
     return;
@@ -90,7 +89,7 @@ int contarVecinosCamino(int posicion_torre_x, int posicion_torre_y , Mapa* mapa)
         int nuevaColumna = posicion_torre_x + desplazamientos[i][1];
 
         // Verificar que esté dentro de los límites del tablero
-        if (nuevaFila >= 0 && nuevaFila < X && nuevaColumna >= 0 && nuevaColumna < Y) {
+        if (nuevaFila >= 0 && nuevaFila < mapa->ancho && nuevaColumna >= 0 && nuevaColumna < mapa->alto) {
             if (mapa->casillas[nuevaFila][nuevaColumna] = CAMINO) {
                 vecinos++;
             }
