@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include "pila.h"
+#include "turno.h"
 
 static int posiciones_validas(Coordenada *validas, TipoCasilla **casillas, int alto, int ancho) {
     int cant_posiciones_validas = 0;
@@ -55,8 +57,43 @@ void disponer(Nivel* nivel, Mapa* mapa) {
 }
 
 void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
-    /* A cargo de la/el estudiante */
-    return;
+
+    Pila* pila = pila_crear();
+    int idx_torre = 0;
+    for (int x = 0; x < mapa->alto; x++) {
+        for (int y = 0; y < mapa->ancho; y++) {
+            if (mapa->casillas[x][y] != VACIO) continue;
+            Coordenada pos = {x, y};
+            Estado est = {pos, idx_torre};
+            mapa->torres[idx_torre] = pos;
+            mapa->casillas[x][y] = TORRE;
+            pila_apilar(pila, est);
+            idx_torre++;
+            if (idx_torre == mapa->cant_torres) {
+                Nivel* copia = inicializar_nivel(
+                    nivel->camino->largo_camino,
+                    nivel->enemigos->cantidad,
+                    nivel->enemigos->vida_inicial
+                );
+                for (int i = 0; i < copia->camino->largo_camino; i++)
+                    copia->camino->posiciones[i] = nivel->camino->posiciones[i];
+                for (int i = 0; i < mapa->cant_torres; i++)
+                    mapa->torres[i] = pila->datos[i].posicion;
+                int vivos = simular_turno(mapa, copia, copia->camino->posiciones, copia->camino->largo_camino);
+                if (vivos == 0) {
+                    liberar_nivel(copia);
+                    pila_destruir(pila);
+                    return;  // Solución encontrada
+                }
+                liberar_nivel(copia);
+                Estado ultimo = pila_tope(pila);
+                mapa->casillas[ultimo.posicion.x][ultimo.posicion.y] = VACIO;
+                idx_torre--;
+                pila_desapilar(pila);
+            }
+        }
+    }
+    pila_destruir(pila);
 }
 
 void disponer_custom(Nivel* nivel, Mapa* mapa) {
