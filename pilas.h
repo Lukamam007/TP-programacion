@@ -1,5 +1,5 @@
 typedef struct _Pila {
-    int datos[MAX_PILA];
+    int *datos;
     int ultimo;
 } Pila;
 
