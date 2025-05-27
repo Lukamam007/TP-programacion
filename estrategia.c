@@ -80,18 +80,17 @@ void disponer_custom(Nivel* nivel, Mapa* mapa) {
 int contarVecinosCamino(int posicion_torre_x, int posicion_torre_y , Mapa* mapa) {
     int vecinos = 0;
     int desplazamientos[8][2] = {
-        {-1, -1}, {-1, 0}, {-1, 1}, // Arriba izquierda, arriba, arriba derecha
-        {0, -1},         {0, 1},   // Izquierda, derecha
-        {1, -1}, {1, 0}, {1, 1}    // Abajo izquierda, abajo, abajo derecha
+        {-1, -1}, {-1, 0}, {-1, 1},
+        {0, -1},         {0, 1},   
+        {1, -1}, {1, 0}, {1, 1}    
     };
 
     for (int i = 0; i < 8; i++) {
         int nuevaFila = posicion_torre_y + desplazamientos[i][0];
         int nuevaColumna = posicion_torre_x + desplazamientos[i][1];
 
-        // Verificar que esté dentro de los límites del tablero
         if (nuevaFila >= 0 && nuevaFila < mapa->ancho && nuevaColumna >= 0 && nuevaColumna < mapa->alto) {
-            if (mapa->casillas[nuevaFila][nuevaColumna] = CAMINO) {
+            if (mapa->casillas[nuevaFila][nuevaColumna] == CAMINO) {
                 vecinos++;
             }
         }
