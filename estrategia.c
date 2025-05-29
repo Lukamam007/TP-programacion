@@ -68,7 +68,7 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
             mapa->torres[num_torre] = pos;
             mapa->casillas[x][y] = TORRE;
             pila_apilar(pila, est);
-            idx_torre++;
+            num_torre++;
             if (num_torre == mapa->cant_torres) {
                 Nivel* copia = inicializar_nivel(
                     nivel->camino->largo_camino,
