@@ -1,4 +1,4 @@
-#include "pila.h"
+#include "pilas.h"
 #include "mapa.h"
 int MAX_PILA = mapa->cant_torres;
 Pila* pila_crear() {
