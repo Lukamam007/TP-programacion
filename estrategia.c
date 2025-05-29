@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "pilas.h"
 #include "turno.h"
 
 static int posiciones_validas(Coordenada *validas, TipoCasilla **casillas, int alto, int ancho) {
