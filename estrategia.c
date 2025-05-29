@@ -96,40 +96,50 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
     pila_destruir(pila);
 }
 
+int comparar(const void *a, const void *b) {
+    return ((area_ataque_de_casillas*)b)->ataque - ((area_ataque_de_casillas*)a)->ataque;
+}
+
 void disponer_custom(Nivel* nivel, Mapa* mapa) {
     int cantidad_casillas = mapa->alto * mapa->ancho;
-    Coordenada posiciones_validas_torre[cantidad_casillas];
+    Coordenada *posiciones_validas_torre = malloc(sizeof(Coordenada) * cantidad_casillas);
     int cant_torres = mapa -> cant_torres;
-    int colocadas = 0;
     int cant_validas = posiciones_validas(posiciones_validas_torre, mapa->casillas, mapa->alto, mapa->ancho);
-    for(int j = 0 ; j < cant_validas && !cant_torres ; j++){
-        if(contarVecinosCamino(posiciones_validas_torre[j].x, posiciones_validas_torre[j].y,mapa) > 3){
-            int nueva_torre_x = posiciones_validas_torre[j].x;
-            int nueva_torre_y = posiciones_validas_torre[j].y;
-            colocar_torre(mapa, nueva_torre_x, nueva_torre_y, colocadas);
-            cant_torres--;
-            colocadas++;
-        } 
+    area_ataque_de_casillas casillas_ataque[cant_validas];
+    posiciones_validas_torre = realloc(posiciones_validas_torre,sizeof(Coordenada) * cant_validas);
+    for(int j = 0 ; j < cant_validas ; j++){
+           casillas_ataque[j].x = posiciones_validas_torre[j].x;
+           casillas_ataque[j].y = posiciones_validas_torre[j].y;
+           casillas_ataque[j].ataque =  contarVecinosCamino(posiciones_validas_torre[j].x, posiciones_validas_torre[j].y , mapa, mapa -> distancia_ataque);
     }
+
+qsort(casillas_ataque, cant_validas, sizeof(area_ataque_de_casillas), comparar);
+
+ for(int nroTorre = 0 ;nroTorre < cant_torres; nroTorre++){
+	colocar_torre(mapa, casillas_ataque[nroTorre].x, casillas_ataque[nroTorre].y, nroTorre);
+}
+
+    free(posiciones_validas_torre);
+
     return;
 }
 
-int contarVecinosCamino(int posicion_torre_x, int posicion_torre_y , Mapa* mapa) {
-    int vecinos = 0;
-    int desplazamientos[8][2] = {
-        {-1, -1}, {-1, 0}, {-1, 1},
-        {0, -1},         {0, 1},   
-        {1, -1}, {1, 0}, {1, 1}    
-    };
 
-    for (int i = 0; i < 8; i++) {
-        int nuevaFila = posicion_torre_y + desplazamientos[i][0];
-        int nuevaColumna = posicion_torre_x + desplazamientos[i][1];
+int contarVecinosCamino(int posicion_torre_x, int posicion_torre_y , Mapa* mapa,int distancia_ataque) {
 
-        if (nuevaFila >= 0 && nuevaFila < mapa->ancho && nuevaColumna >= 0 && nuevaColumna < mapa->alto) {
-            if (mapa->casillas[nuevaFila][nuevaColumna] == CAMINO) {
+ int vecinos = 0;
+ for (int dx = -distancia_ataque; dx <= distancia_ataque; dx++) {
+        for (int dy = -distancia_ataque; dy <= distancia_ataque; dy++) {
+            int nuevo_x = posicion_torre_x + dx;
+            int nuevo_y = posicion_torre_y + dy;
+
+            if (dx == 0 && dy == 0) continue;
+            if (nuevo_x < 0 || nuevo_y < 0) continue;
+            if (nuevo_x >= mapa->alto || nuevo_y >= mapa->ancho) continue;
+
+	if (mapa->casillas[nuevo_y][nuevo_x] == CAMINO) 
                 vecinos++;
-            }
+           
         }
     }
 
