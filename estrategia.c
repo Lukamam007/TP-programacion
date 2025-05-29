@@ -59,17 +59,17 @@ void disponer(Nivel* nivel, Mapa* mapa) {
 void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
 
     Pila* pila = pila_crear();
-    int idx_torre = 0;
+    int num_torre = 0;
     for (int x = 0; x < mapa->alto; x++) {
         for (int y = 0; y < mapa->ancho; y++) {
             if (mapa->casillas[x][y] != VACIO) continue;
             Coordenada pos = {x, y};
-            Estado est = {pos, idx_torre};
-            mapa->torres[idx_torre] = pos;
+            Estado est = {pos, num_torre};
+            mapa->torres[num_torre] = pos;
             mapa->casillas[x][y] = TORRE;
             pila_apilar(pila, est);
             idx_torre++;
-            if (idx_torre == mapa->cant_torres) {
+            if (num_torre == mapa->cant_torres) {
                 Nivel* copia = inicializar_nivel(
                     nivel->camino->largo_camino,
                     nivel->enemigos->cantidad,
@@ -88,7 +88,7 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
                 liberar_nivel(copia);
                 Estado ultimo = pila_tope(pila);
                 mapa->casillas[ultimo.posicion.x][ultimo.posicion.y] = VACIO;
-                idx_torre--;
+                num_torre--;
                 pila_desapilar(pila);
             }
         }
