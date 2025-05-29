@@ -35,7 +35,7 @@ void pila_desapilar(Pila* p) {
 
 void pila_imprimir(Pila* p) {
     for (int i = 0; i < p->ultimo; i++)
-        printf("(%d, %d) idx: %d\n", p->datos[i].posicion.x, p->datos[i].posicion.y, p->datos[i].idx_torre);
+        printf("(%d, %d) idx: %d\n", p->datos[i].posicion.x, p->datos[i].posicion.y, p->datos[i].num_torre);
 }
 
 void pila_destruir(Pila* p) {
