@@ -7,7 +7,7 @@
 
 typedef struct {
     Coordenada posicion;
-    int idx_torre;
+    int num_torre;
 } Estado;
 
 extern int MAX_PILA;
