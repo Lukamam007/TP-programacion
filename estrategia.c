@@ -56,29 +56,31 @@ void disponer(Nivel* nivel, Mapa* mapa) {
 }
 
 void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
-   Pila* pila = pila_crear();
+   void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
+    Pila* pila = pila_crear();
     int idx_torre = 0;
-    bool solucion_encontrada = false;
+    int exito = 0;  // 0 si no hay solución, 1 si sí
 
-    // Limpio el mapa antes de empezar, por si queda algo
+    // Limpiar mapa al inicio
     for (int x = 0; x < mapa->alto; x++)
         for (int y = 0; y < mapa->ancho; y++)
             if (mapa->casillas[x][y] == TORRE)
                 mapa->casillas[x][y] = VACIO;
 
     while (idx_torre >= 0) {
-        bool encontrada_posicion = false;
+        int encontrada = 0;
 
-        for (int x = 0; x < mapa->alto && !encontrada_posicion; x++) {
-            for (int y = 0; y < mapa->ancho && !encontrada_posicion; y++) {
-                if (mapa->casillas[x][y] != VACIO) continue;
+        for (int x = 0; x < mapa->alto && !encontrada; x++) {
+            for (int y = 0; y < mapa->ancho && !encontrada; y++) {
+                if (mapa->casillas[x][y] != VACIO)
+                    continue;
 
                 Coordenada pos = {x, y};
                 Estado est = {pos, idx_torre};
                 mapa->casillas[x][y] = TORRE;
                 pila_apilar(pila, est);
                 idx_torre++;
-                encontrada_posicion = true;
+                encontrada = 1;
 
                 if (idx_torre == mapa->cant_torres) {
                     Nivel* copia = inicializar_nivel(nivel->camino->largo_camino,
@@ -91,8 +93,8 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
                     int vivos = simular_turno(mapa, copia, copia->camino->posiciones, copia->camino->largo_camino);
 
                     if (vivos == 0) {
-                        solucion_encontrada = true;
                         liberar_nivel(copia);
+                        exito = 1;
                         break;
                     }
 
@@ -101,33 +103,35 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
             }
         }
 
-        if (!encontrada_posicion) {
-            if (pila_es_vacia(pila)) break;
+        if (!encontrada) {
+            if (pila_es_vacia(pila))
+                break;
 
-            Estado ultimo = pila_tope(pila);
-            mapa->casillas[ultimo.posicion.x][ultimo.posicion.y] = VACIO;
-            idx_torre = ultimo.idx_torre;
+            Estado est = pila_tope(pila);
+            mapa->casillas[est.posicion.x][est.posicion.y] = VACIO;
+            idx_torre = est.idx_torre;
             pila_desapilar(pila);
         }
 
-        if (solucion_encontrada) break;
+        if (exito == 1)
+            break;
     }
 
-    // Si no se encontró solución, limpio las torres del mapa
-    if (!solucion_encontrada) {
+    // Si no se logró matar a todos los enemigos, limpiamos el mapa
+    if (exito == 0) {
         while (!pila_es_vacia(pila)) {
             Estado est = pila_tope(pila);
             mapa->casillas[est.posicion.x][est.posicion.y] = VACIO;
             pila_desapilar(pila);
         }
     } else {
-        // Si hay solución, actualizo el arreglo de torres con las posiciones en la pila
-        for (int i = 0; i < mapa->cant_torres; i++) {
+        // Si tuvo éxito, guardamos las posiciones definitivas en el arreglo mapa->torres
+        for (int i = 0; i < mapa->cant_torres; i++)
             mapa->torres[i] = pila->datos[i].posicion;
-        }
     }
 
     pila_destruir(pila);
+}
 }
 
 int comparar(const void *a, const void *b) {
