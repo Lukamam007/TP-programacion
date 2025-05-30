@@ -1,9 +1,9 @@
 #include "pilas.h"
 #include "mapa.h"
-int MAX_PILA = mapa->cant_torres;
-Pila* pila_crear() {
+
+Pila* pila_crear(Mapa* mapa) {
     Pila* p = malloc(sizeof(Pila));
-    p->datos = malloc(sizeof(Estado) * MAX_PILA);
+    p->datos = malloc(sizeof(Estado) * mapa -> cant_torres);
     p->ultimo = 0;
     return p;
 }
@@ -21,10 +21,6 @@ Estado pila_tope(Pila* p) {
 }
 
 void pila_apilar(Pila* p, Estado e) {
-    if (p->ultimo == MAX_PILA) {
-        MAX_PILA += 10;
-        p->datos = realloc(p->datos, sizeof(Estado) * MAX_PILA);
-    }
     p->datos[p->ultimo++] = e;
 }
 
