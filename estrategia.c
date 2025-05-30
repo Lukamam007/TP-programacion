@@ -56,45 +56,78 @@ void disponer(Nivel* nivel, Mapa* mapa) {
 }
 
 void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
-    Pila* pila = pila_crear(mapa);
-    int solucion_encontrada = 0;
-    int nro_torre = 0;
-    while (nro_torre >= 0 && !solucion_encontrada) {
-    int encontrada_posicion = 0;
-     for (int x = 0; x < mapa->alto && !encontrada_posicion; x++) {
-         for (int y = 0; y < mapa->ancho && !encontrada_posicion; y++) {
-            if (mapa->casillas[x][y] != VACIO) 
-		continue;
-            Coordenada pos = {x, y};
-            Estado est = {pos, nro_torre};
-            mapa->torres[nro_torre] = pos;
-            mapa->casillas[x][y] = TORRE;
-            pila_apilar(pila, est);
-            nro_torre++;
-            encontrada_posicion = 1;
-            if (nro_torre == mapa->cant_torres) {
-                Nivel* copia = inicializar_nivel(nivel->camino->largo_camino, nivel->enemigos->cantidad, nivel->enemigos->vida_inicial);
-                for (int i = 0; i < copia->camino->largo_camino; i++)
-                    copia->camino->posiciones[i] = nivel->camino->posiciones[i];
-                for (int i = 0; i < mapa->cant_torres; i++)
-                    mapa->torres[i] = pila->datos[i].posicion;
-                int vivos = simular_turno(mapa, copia, copia->camino->posiciones, copia->camino->largo_camino);
-                if (vivos == 0)
-                    solucion_encontrada = 1;
-                liberar_nivel(copia);
+   Pila* pila = pila_crear();
+    int idx_torre = 0;
+    bool solucion_encontrada = false;
+
+    // Limpio el mapa antes de empezar, por si queda algo
+    for (int x = 0; x < mapa->alto; x++)
+        for (int y = 0; y < mapa->ancho; y++)
+            if (mapa->casillas[x][y] == TORRE)
+                mapa->casillas[x][y] = VACIO;
+
+    while (idx_torre >= 0) {
+        bool encontrada_posicion = false;
+
+        for (int x = 0; x < mapa->alto && !encontrada_posicion; x++) {
+            for (int y = 0; y < mapa->ancho && !encontrada_posicion; y++) {
+                if (mapa->casillas[x][y] != VACIO) continue;
+
+                Coordenada pos = {x, y};
+                Estado est = {pos, idx_torre};
+                mapa->casillas[x][y] = TORRE;
+                pila_apilar(pila, est);
+                idx_torre++;
+                encontrada_posicion = true;
+
+                if (idx_torre == mapa->cant_torres) {
+                    Nivel* copia = inicializar_nivel(nivel->camino->largo_camino,
+                                                     nivel->enemigos->cantidad,
+                                                     nivel->enemigos->vida_inicial);
+
+                    for (int i = 0; i < copia->camino->largo_camino; i++)
+                        copia->camino->posiciones[i] = nivel->camino->posiciones[i];
+
+                    int vivos = simular_turno(mapa, copia, copia->camino->posiciones, copia->camino->largo_camino);
+
+                    if (vivos == 0) {
+                        solucion_encontrada = true;
+                        liberar_nivel(copia);
+                        break;
+                    }
+
+                    liberar_nivel(copia);
+                }
             }
         }
+
+        if (!encontrada_posicion) {
+            if (pila_es_vacia(pila)) break;
+
+            Estado ultimo = pila_tope(pila);
+            mapa->casillas[ultimo.posicion.x][ultimo.posicion.y] = VACIO;
+            idx_torre = ultimo.idx_torre;
+            pila_desapilar(pila);
+        }
+
+        if (solucion_encontrada) break;
     }
-    while (!encontrada_posicion && !pila_es_vacia(pila)) {
-        Estado ultimo = pila_tope(pila);
-        mapa->casillas[ultimo.posicion.x][ultimo.posicion.y] = VACIO;
-        nro_torre = ultimo.num_torre;
-        pila_desapilar(pila);
+
+    // Si no se encontró solución, limpio las torres del mapa
+    if (!solucion_encontrada) {
+        while (!pila_es_vacia(pila)) {
+            Estado est = pila_tope(pila);
+            mapa->casillas[est.posicion.x][est.posicion.y] = VACIO;
+            pila_desapilar(pila);
+        }
+    } else {
+        // Si hay solución, actualizo el arreglo de torres con las posiciones en la pila
+        for (int i = 0; i < mapa->cant_torres; i++) {
+            mapa->torres[i] = pila->datos[i].posicion;
+        }
     }
-    if (!encontrada_posicion && pila_es_vacia(pila))
-        break;
-}
-pila_destruir(pila);
+
+    pila_destruir(pila);
 }
 
 int comparar(const void *a, const void *b) {
