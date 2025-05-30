@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "nivel.h" 
+#include "mapa.h"
 
 typedef struct {
     Coordenada posicion;
