@@ -171,7 +171,7 @@ int contarVecinosCamino(int posicion_torre_x, int posicion_torre_y , Mapa* mapa,
             if (nuevo_x < 0 || nuevo_y < 0) continue;
             if (nuevo_x >= mapa->alto || nuevo_y >= mapa->ancho) continue;
 
-	if (mapa->casillas[nuevo_y][nuevo_x] == CAMINO) 
+	if (mapa->casillas[nuevo_x][nuevo_y] == CAMINO) 
                 vecinos++;
            
         }
