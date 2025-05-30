@@ -77,7 +77,7 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
                 for (int i = 0; i < copia->camino->largo_camino; i++)
                     copia->camino->posiciones[i] = nivel->camino->posiciones[i];
                 for (int i = 0; i < mapa->cant_torres; i++)
-                    copia->torres[i] = pila->datos[i].posicion;
+                    mapa->torres[i] = pila->datos[i].posicion;
                 int vivos = simular_turno(mapa, copia, copia->camino->posiciones, copia->camino->largo_camino);
                 if (vivos == 0)
                     solucion_encontrada = 1;
@@ -88,7 +88,7 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
     while (!encontrada_posicion && !pila_es_vacia(pila)) {
         Estado ultimo = pila_tope(pila);
         mapa->casillas[ultimo.posicion.x][ultimo.posicion.y] = VACIO;
-        nro_torre = ultimo.nro_torre;
+        nro_torre = ultimo.num_torre;
         pila_desapilar(pila);
     }
     if (!encontrada_posicion && pila_es_vacia(pila))
