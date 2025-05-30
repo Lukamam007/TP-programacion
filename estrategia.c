@@ -57,25 +57,25 @@ void disponer(Nivel* nivel, Mapa* mapa) {
 
 void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
     Pila* pila = pila_crear();
-    int idx_torre = 0;
+    int num_torre = 0;
     int exito = 0;  // 0 si no hay solución, 1 si sí
     for (int x = 0; x < mapa->alto; x++)
         for (int y = 0; y < mapa->ancho; y++)
             if (mapa->casillas[x][y] == TORRE)
                 mapa->casillas[x][y] = VACIO;
-    while (idx_torre >= 0) {
+    while (num_torre >= 0) {
         int encontrada = 0;
         for (int x = 0; x < mapa->alto && !encontrada; x++) {
             for (int y = 0; y < mapa->ancho && !encontrada; y++) {
                 if (mapa->casillas[x][y] != VACIO)
                     continue;
                 Coordenada pos = {x, y};
-                Estado est = {pos, idx_torre};
+                Estado est = {pos, num_torre};
                 mapa->casillas[x][y] = TORRE;
                 pila_apilar(pila, est);
-                idx_torre++;
+                num_torre++;
                 encontrada = 1;
-                if (idx_torre == mapa->cant_torres) {
+                if (num_torre == mapa->cant_torres) {
                     Nivel* copia = inicializar_nivel(nivel->camino->largo_camino, nivel->enemigos->cantidad, nivel->enemigos->vida_inicial);
                     for (int i = 0; i < copia->camino->largo_camino; i++)
                         copia->camino->posiciones[i] = nivel->camino->posiciones[i];
@@ -99,7 +99,7 @@ void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
 
             Estado est = pila_tope(pila);
             mapa->casillas[est.posicion.x][est.posicion.y] = VACIO;
-            idx_torre = est.idx_torre;
+            num_torre = est.idx_torre;
             pila_desapilar(pila);
         }
         if (exito == 1)
