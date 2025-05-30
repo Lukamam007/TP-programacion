@@ -17,7 +17,7 @@ typedef struct _Pila {
     int ultimo;
 } Pila;
 
-Pila* pila_crear();
+Pila* pila_crear(Mapa*);
 int pila_es_vacia(Pila*);
 Estado pila_tope(Pila*);
 void pila_apilar(Pila*, Estado);
