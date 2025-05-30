@@ -1,5 +1,4 @@
 #include "pilas.h"
-#include "mapa.h"
 
 Pila* pila_crear(Mapa* mapa) {
     Pila* p = malloc(sizeof(Pila));
