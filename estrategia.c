@@ -58,6 +58,7 @@ void disponer(Nivel* nivel, Mapa* mapa) {
 void disponer_con_backtracking(Nivel* nivel, Mapa* mapa) {
     Pila* pila = pila_crear(mapa);
     int solucion_encontrada = 0;
+    int nro_torre = 0;
     while (nro_torre >= 0 && !solucion_encontrada) {
     int encontrada_posicion = 0;
      for (int x = 0; x < mapa->alto && !encontrada_posicion; x++) {
